@@ -17,4 +17,19 @@
     <string name="new_username_hint">שם משתמש חדש</string>
     <string name="new_password_hint">סיסמה חדשה</string>
     <string name="register_button">הרשמה</string>
+
+    <!-- Authentication Messages -->
+    <string name="empty_fields_error">אנא מלא את כל השדות</string>
+    <string name="registration_success">נרשמת בהצלחה! כעת תוכל להתחבר</string>
+    <string name="registration_error">שגיאה בהרשמה</string>
+    <string name="user_exists_error">שם המשתמש כבר קיים</string>
+    <string name="login_success">התחברות מוצלחת!</string>
+    <string name="login_error">שגיאה בהתחברות</string>
+    <string name="invalid_credentials">שם משתמש או סיסמה שגויים</string>
+    <string name="network_error">שגיאת רשת</string>
+    <string name="logged_in_as">מחובר כ: %s</string>
+    <string name="logout_button">התנתק</string>
+    <string name="logout_success">התנתקת בהצלחה</string>
 </resources>
+
+

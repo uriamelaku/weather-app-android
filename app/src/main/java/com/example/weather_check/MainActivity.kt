@@ -2,12 +2,15 @@ package com.example.weather_check
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.weather_check.utils.TokenManager
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -34,6 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         val btnGoToLogin = findViewById<Button>(R.id.btnGoToLogin)
         val btnCheckServer = findViewById<Button>(R.id.btnCheckServer)
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val tvUserStatus = findViewById<TextView>(R.id.tvUserStatus)
+
+        updateUIBasedOnLoginStatus()
 
         btnGoToLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -42,6 +49,36 @@ class MainActivity : AppCompatActivity() {
 
         btnCheckServer.setOnClickListener {
             checkServerConnection()
+        }
+
+        btnLogout.setOnClickListener {
+            TokenManager.clearToken(this)
+            Toast.makeText(this, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
+            updateUIBasedOnLoginStatus()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // עדכון המצב בכל פעם שחוזרים למסך
+        updateUIBasedOnLoginStatus()
+    }
+
+    private fun updateUIBasedOnLoginStatus() {
+        val btnGoToLogin = findViewById<Button>(R.id.btnGoToLogin)
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val tvUserStatus = findViewById<TextView>(R.id.tvUserStatus)
+
+        if (TokenManager.isLoggedIn(this)) {
+            val username = TokenManager.getUsername(this)
+            tvUserStatus.text = getString(R.string.logged_in_as, username)
+            tvUserStatus.visibility = View.VISIBLE
+            btnGoToLogin.visibility = View.GONE
+            btnLogout.visibility = View.VISIBLE
+        } else {
+            tvUserStatus.visibility = View.GONE
+            btnGoToLogin.visibility = View.VISIBLE
+            btnLogout.visibility = View.GONE
         }
     }
 
@@ -82,3 +119,4 @@ class MainActivity : AppCompatActivity() {
         })
     }
 }
+

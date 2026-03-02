@@ -20,6 +20,11 @@ object ApiConfig {
 
     // נתיבי API
     const val PING_ENDPOINT = "/ping"
+    const val REGISTER_ENDPOINT = "/register"
+    const val LOGIN_ENDPOINT = "/login"
+    const val WEATHER_ENDPOINT = "/weather"
+    const val HISTORY_ENDPOINT = "/history"
+    const val FAVORITES_ENDPOINT = "/favorites"
 }
 
 
