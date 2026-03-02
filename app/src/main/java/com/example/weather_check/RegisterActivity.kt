@@ -1,5 +1,6 @@
 package com.example.weather_check
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -111,7 +112,9 @@ class RegisterActivity : AppCompatActivity() {
                                     getString(R.string.registration_success),
                                     Toast.LENGTH_LONG
                                 ).show()
-                                // סגור את המסך ותחזור למסך ההתחברות
+                                // Navigate to HomeActivity and finish RegisterActivity
+                                val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                                startActivity(intent)
                                 finish()
                             } catch (e: Exception) {
                                 android.util.Log.e("RegisterActivity", "Parse error", e)

@@ -140,7 +140,9 @@ class LoginActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-                                // כאן תוכל לנווט למסך הבא (כרגע סוגרים את מסך ההתחברות)
+                                // Navigate to HomeActivity and finish LoginActivity
+                                val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                                startActivity(intent)
                                 finish()
                             } catch (e: Exception) {
                                 android.util.Log.e("LoginActivity", "Parse error", e)

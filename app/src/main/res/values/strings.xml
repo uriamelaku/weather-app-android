@@ -30,6 +30,16 @@
     <string name="logged_in_as">מחובר כ: %s</string>
     <string name="logout_button">התנתק</string>
     <string name="logout_success">התנתקת בהצלחה</string>
+
+    <!-- Home Activity -->
+    <string name="weather_title">מזג האוויר</string>
+    <string name="weather_subtitle">חיפוש עיר ושמירת מועדפים בקלות</string>
+    <string name="search_hint">הכנס שם עיר</string>
+    <string name="search_button">חיפוש</string>
+    <string name="history_button">היסטוריה</string>
+    <string name="favorites_button">מועדפים</string>
+    <string name="no_weather_data">אין נתונים להצגה כרגע</string>
+    <string name="search_city_message">חפש עיר כדי לראות את מזג האוויר</string>
 </resources>
 
 
