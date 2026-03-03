@@ -40,6 +40,20 @@
     <string name="favorites_button">מועדפים</string>
     <string name="no_weather_data">אין נתונים להצגה כרגע</string>
     <string name="search_city_message">חפש עיר כדי לראות את מזג האוויר</string>
+
+    <!-- Weather Display -->
+    <string name="feels_like">מרגיש כמו</string>
+    <string name="humidity">לחות</string>
+    <string name="wind_speed">מהירות רוח</string>
+
+    <!-- Weather Errors -->
+    <string name="empty_city_error">אנא הכנס שם עיר</string>
+    <string name="weather_error">שגיאה בטעינת מזג האוויר</string>
+    <string name="city_not_found_error">העיר לא נמצאה. בדוק את השם ונסה שוב</string>
+    <string name="token_missing_error">אין אישור גישה. אנא התחבר מחדש</string>
+    <string name="token_invalid_error">אישור הגישה לא תקף. אנא התחבר מחדש</string>
+    <string name="weather_loaded_success">מזג האוויר נטען בהצלחה</string>
+    <string name="parse_error">שגיאה בעיבוד הנתונים</string>
 </resources>
 
 

@@ -93,27 +93,17 @@ class RegisterActivity : AppCompatActivity() {
                 android.util.Log.d("RegisterActivity", "Response body: $responseBody")
 
                 runOnUiThread {
-                    if (responseBody.isNullOrEmpty()) {
-                        Toast.makeText(
-                            this@RegisterActivity,
-                            "${getString(R.string.registration_error)}: תגובה ריקה מהשרת",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        response.close()
-                        return@runOnUiThread
-                    }
-
                     when {
                         response.isSuccessful -> {
                             try {
-                                val registerResponse = gson.fromJson(responseBody, RegisterResponse::class.java)
+                                gson.fromJson(responseBody, RegisterResponse::class.java)
                                 Toast.makeText(
                                     this@RegisterActivity,
                                     getString(R.string.registration_success),
                                     Toast.LENGTH_LONG
                                 ).show()
-                                // Navigate to HomeActivity and finish RegisterActivity
-                                val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+                                // Contract flow: register -> login (token is returned only from /login)
+                                val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             } catch (e: Exception) {

@@ -1,15 +1,16 @@
 package com.example.weather_check.api
 
-import android.content.Context
 import com.example.weather_check.ApiConfig
-import com.example.weather_check.models.*
-import com.example.weather_check.utils.TokenManager
+import com.example.weather_check.models.AddFavoriteRequest
+import com.example.weather_check.models.ApiError
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
 /**
@@ -23,61 +24,80 @@ object ApiHelper {
         .build()
 
     private val gson = Gson()
-    private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaType()
+    private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
 
-    /**
-     * שליחת בקשת POST עם JSON
-     */
-    fun postJson(endpoint: String, body: Any, token: String? = null): Response {
-        val json = gson.toJson(body)
-        val requestBody = json.toRequestBody(JSON_MEDIA_TYPE)
-
-        val requestBuilder = Request.Builder()
+    internal fun buildGetRequest(endpoint: String, token: String): Request {
+        return Request.Builder()
             .url(ApiConfig.BASE_URL + endpoint)
-            .post(requestBody)
-
-        // הוספת הטוקן אם קיים
-        if (token != null) {
-            requestBuilder.addHeader("Authorization", "Bearer $token")
-        }
-
-        return client.newCall(requestBuilder.build()).execute()
+            .addHeader("Authorization", "Bearer $token")
+            .get()
+            .build()
     }
 
-    /**
-     * שליחת בקשת GET
-     */
-    fun get(endpoint: String, token: String? = null): Response {
-        val requestBuilder = Request.Builder()
+    internal fun buildDeleteRequest(endpoint: String, token: String): Request {
+        return Request.Builder()
             .url(ApiConfig.BASE_URL + endpoint)
-            .get()
+            .addHeader("Authorization", "Bearer $token")
+            .delete()
+            .build()
+    }
 
-        // הוספת הטוקן אם קיים
-        if (token != null) {
-            requestBuilder.addHeader("Authorization", "Bearer $token")
-        }
-
-        return client.newCall(requestBuilder.build()).execute()
+    internal fun buildPostJsonRequest(endpoint: String, body: Any, token: String): Request {
+        val json = gson.toJson(body)
+        return Request.Builder()
+            .url(ApiConfig.BASE_URL + endpoint)
+            .addHeader("Authorization", "Bearer $token")
+            .post(json.toRequestBody(jsonMediaType))
+            .build()
     }
 
     /**
      * פענוח תגובת שגיאה
      */
-    fun parseError(response: Response): String {
+    fun parseError(responseBody: String?): String {
+        if (responseBody.isNullOrBlank()) return "Unknown error"
         return try {
-            val errorResponse = gson.fromJson(response.body?.string(), ErrorResponse::class.java)
-            errorResponse.error
+            gson.fromJson(responseBody, ApiError::class.java).error
         } catch (e: Exception) {
-            "Error code: ${response.code}"
+            "Unknown error"
         }
     }
 
     /**
-     * דוגמה: קבלת מזג אויר עם אימות
+     * דוגמה: קבלת היסטוריית חיפושים עם אימות
      */
-    fun getWeatherWithAuth(context: Context, city: String): Response? {
-        val token = TokenManager.getToken(context) ?: return null
-        return get("${ApiConfig.WEATHER_ENDPOINT}?city=$city", token)
+    fun getHistoryWithAuth(token: String): Response {
+        return client.newCall(buildGetRequest(ApiConfig.HISTORY_ENDPOINT, token)).execute()
+    }
+
+    /**
+     * ניקוי היסטוריית חיפושים עם אימות
+     */
+    fun clearHistoryWithAuth(token: String): Response {
+        return client.newCall(buildDeleteRequest(ApiConfig.HISTORY_ENDPOINT, token)).execute()
+    }
+
+    /**
+     * דוגמה: קבלת מועדפים עם אימות
+     */
+    fun getFavoritesWithAuth(token: String): Response {
+        return client.newCall(buildGetRequest(ApiConfig.FAVORITES_ENDPOINT, token)).execute()
+    }
+
+    /**
+     * הוספת עיר למועדפים עם אימות
+     */
+    fun addFavoriteWithAuth(token: String, city: String, country: String): Response {
+        val request = buildPostJsonRequest(ApiConfig.FAVORITES_ENDPOINT, AddFavoriteRequest(city, country), token)
+        return client.newCall(request).execute()
+    }
+
+    /**
+     * הסרת עיר מהמועדפים עם אימות
+     */
+    fun removeFavoriteWithAuth(token: String, city: String): Response {
+        val encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8.name())
+        val endpoint = ApiConfig.FAVORITE_BY_CITY_ENDPOINT_TEMPLATE.format(encodedCity)
+        return client.newCall(buildDeleteRequest(endpoint, token)).execute()
     }
 }
-

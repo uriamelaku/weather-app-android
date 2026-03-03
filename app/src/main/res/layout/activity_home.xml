@@ -59,6 +59,7 @@
             android:layoutDirection="rtl">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCityInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textDirection="rtl"
@@ -120,6 +121,7 @@
 
     <!-- Empty State Card - No Weather Data Yet -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardEmptyState"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -153,6 +155,141 @@
                 android:textColor="#CCCCCC"
                 android:gravity="center"
                 android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Weather Display Card - Shows after successful search -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardWeather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/dark_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/dark_gray"
+            android:padding="32dp"
+            android:layoutDirection="rtl"
+            android:gravity="center">
+
+            <!-- City Name -->
+            <TextView
+                android:id="@+id/tvCityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center" />
+
+            <!-- Temperature -->
+            <TextView
+                android:id="@+id/tvTemperature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="72sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginTop="16dp"
+                android:gravity="center" />
+
+            <!-- Feels Like -->
+            <TextView
+                android:id="@+id/tvFeelsLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#CCCCCC"
+                android:layout_marginTop="8dp"
+                android:gravity="center" />
+
+            <!-- Weather Description -->
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="16dp"
+                android:gravity="center" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#444444"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Weather Details Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:baselineAligned="false"
+                android:layoutDirection="ltr">
+
+                <!-- Humidity -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/humidity"
+                        android:textSize="14sp"
+                        android:textColor="#AAAAAA"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvHumidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <!-- Wind Speed -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/wind_speed"
+                        android:textSize="14sp"
+                        android:textColor="#AAAAAA"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/tvWindSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
