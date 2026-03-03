@@ -3,9 +3,10 @@ package com.example.weather_check
 object ApiConfig {
     const val BASE_URL_ANDROID_EMULATOR = "http://10.0.2.2:3000"
     const val BASE_URL_LOCALHOST = "http://localhost:3000"
+    const val BASE_URL_PRODUCTION = "https://server-weather-android-app-new.onrender.com"
 
-    // Default Android target; localhost is for host-machine local checks only.
-    const val BASE_URL = BASE_URL_ANDROID_EMULATOR
+    // Default Android target; now using production server
+    const val BASE_URL = BASE_URL_PRODUCTION
 
     const val PING_ENDPOINT = "/ping"
     const val REGISTER_ENDPOINT = "/register"
