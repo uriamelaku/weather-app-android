@@ -34,6 +34,8 @@
     <!-- Home Activity -->
     <string name="weather_title">מזג האוויר</string>
     <string name="weather_subtitle">חיפוש עיר ושמירת מועדפים בקלות</string>
+    <string name="greeting">שלום, %s</string>
+    <string name="greeting_without_name">שלום</string>
     <string name="search_hint">הכנס שם עיר</string>
     <string name="search_button">חיפוש</string>
     <string name="history_button">היסטוריה</string>
@@ -65,4 +67,5 @@
     <string name="remove_from_history">הסר מההיסטוריה</string>
     <string name="delete_item">מחק פריט</string>
     <string name="select_weather_first">חפש קודם עיר כדי לעדכן רשימות</string>
+    <string name="clear_all_favorites">נקה את כל המועדפים</string>
 </resources>

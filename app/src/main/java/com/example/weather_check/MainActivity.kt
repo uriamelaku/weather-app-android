@@ -27,6 +27,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if user is already logged in and redirect to HomeActivity
+        if (TokenManager.isLoggedIn(this)) {
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -60,7 +70,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // עדכון המצב בכל פעם שחוזרים למסך
+        // No need to redirect again since onCreate handles it on app start
+        // If we return from Login after logout, buttons will show correctly
         updateUIBasedOnLoginStatus()
     }
 

@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit
  */
 object ApiHelper {
     private val client = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)  // Extended for cold start on Render
+        .readTimeout(60, TimeUnit.SECONDS)      // Extended for cold start on Render
         .build()
 
     private val gson = Gson()
@@ -78,6 +78,15 @@ object ApiHelper {
     }
 
     /**
+     * הסרת עיר בודדת מההיסטוריה עם אימות
+     */
+    fun removeHistoryItemWithAuth(token: String, city: String): Response {
+        val encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8.name())
+        val endpoint = ApiConfig.HISTORY_BY_CITY_ENDPOINT_TEMPLATE.format(encodedCity)
+        return client.newCall(buildDeleteRequest(endpoint, token)).execute()
+    }
+
+    /**
      * דוגמה: קבלת מועדפים עם אימות
      */
     fun getFavoritesWithAuth(token: String): Response {
@@ -99,5 +108,12 @@ object ApiHelper {
         val encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8.name())
         val endpoint = ApiConfig.FAVORITE_BY_CITY_ENDPOINT_TEMPLATE.format(encodedCity)
         return client.newCall(buildDeleteRequest(endpoint, token)).execute()
+    }
+
+    /**
+     * ניקוי כל המועדפים עם אימות
+     */
+    fun clearFavoritesWithAuth(token: String): Response {
+        return client.newCall(buildDeleteRequest(ApiConfig.FAVORITES_ENDPOINT, token)).execute()
     }
 }

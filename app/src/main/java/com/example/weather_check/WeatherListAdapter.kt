@@ -1,5 +1,6 @@
 package com.example.weather_check
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,13 @@ class WeatherListAdapter(
     private val items = mutableListOf<WeatherResponse>()
 
     fun submitItems(newItems: List<WeatherResponse>) {
+        Log.d("WeatherListAdapter", "submitItems called with ${newItems.size} items")
+        newItems.forEach {
+            Log.d("WeatherListAdapter", "Item: ${it.city}")
+        }
         items.clear()
         items.addAll(newItems)
+        Log.d("WeatherListAdapter", "Adapter now has ${items.size} items")
         notifyDataSetChanged()
     }
 
@@ -39,7 +45,14 @@ class WeatherListAdapter(
 
         fun bind(item: WeatherResponse, onDeleteClick: (WeatherResponse) -> Unit) {
             title.text = "${item.city}, ${item.country}"
-            subtitle.text = "${item.temp.toInt()}° - ${item.description}"
+            // Show weather data only if available (temp > 0)
+            if (item.temp > 0.0 || item.description.isNotEmpty()) {
+                subtitle.text = "${item.temp.toInt()}° - ${item.description}"
+                subtitle.visibility = View.VISIBLE
+            } else {
+                // Hide subtitle if no weather data
+                subtitle.visibility = View.GONE
+            }
             deleteButton.setOnClickListener { onDeleteClick(item) }
         }
     }

@@ -16,7 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weather_check.api.ApiHelper
 import com.example.weather_check.models.WeatherResponse
+import com.example.weather_check.repository.NetworkRepository
 import com.example.weather_check.utils.TokenManager
+import com.example.weather_check.utils.toWeatherResponse
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import okhttp3.Call
@@ -52,8 +54,8 @@ class HomeActivity : AppCompatActivity() {
 
     private var currentWeather: WeatherResponse? = null
     private var selectedMode: SelectedMode = SelectedMode.NONE
-    private val historyItems = mutableListOf<WeatherResponse>()
-    private val favoriteItems = mutableListOf<WeatherResponse>()
+    private var historyItems = mutableListOf<WeatherResponse>()
+    private var favoriteItems = mutableListOf<WeatherResponse>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +78,26 @@ class HomeActivity : AppCompatActivity() {
 
         btnToggleFavorite = findViewById(R.id.btnToggleFavorite)
 
+        // Display greeting with username
+        val tvGreeting = findViewById<TextView>(R.id.tvGreeting)
+        val username = TokenManager.getUsername(this)
+        tvGreeting.text = if (username.isNullOrEmpty()) {
+            getString(R.string.greeting_without_name)
+        } else {
+            getString(R.string.greeting, username)
+        }
+
+        // Setup logout button
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
+        btnLogout.setOnClickListener {
+            TokenManager.clearToken(this)
+            Toast.makeText(this, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
         listAdapter = WeatherListAdapter { item -> onDeleteListItem(item) }
         rvList.layoutManager = LinearLayoutManager(this)
         rvList.adapter = listAdapter
@@ -96,18 +118,28 @@ class HomeActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btnHistory).setOnClickListener {
-            selectedMode = SelectedMode.HISTORY
-            renderSelectedList()
+            val intent = Intent(this, HistoryActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.btnFavorites).setOnClickListener {
-            selectedMode = SelectedMode.FAVORITES
-            renderSelectedList()
+            val intent = Intent(this, FavoritesActivity::class.java)
+            startActivity(intent)
         }
 
         btnToggleFavorite.setOnClickListener { toggleCurrentFavorite() }
 
         updateToggleButtons()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Reload favorites from server when returning to this activity
+        // This ensures the favorite button state is up-to-date
+        val token = TokenManager.getToken(this)
+        if (token != null) {
+            loadFavoritesFromServer(token)
+        }
     }
 
     private fun fetchWeather(city: String) {
@@ -196,29 +228,168 @@ class HomeActivity : AppCompatActivity() {
             return
         }
 
-        val existingIndex = favoriteItems.indexOfFirst { isSameLocation(it, weather) }
-        if (existingIndex >= 0) {
-            favoriteItems.removeAt(existingIndex)
-        } else {
-            favoriteItems.add(0, weather)
+        val token = TokenManager.getToken(this)
+        if (token == null) {
+            Toast.makeText(this, getString(R.string.token_missing_error), Toast.LENGTH_LONG).show()
+            return
         }
 
-        updateToggleButtons()
-        if (selectedMode == SelectedMode.FAVORITES) {
-            renderSelectedList()
+        val isFavorite = favoriteItems.any { isSameLocation(it, weather) }
+
+        if (isFavorite) {
+            // Remove from favorites
+            btnToggleFavorite.isEnabled = false
+            NetworkRepository.removeFavorite(
+                token = token,
+                city = weather.city,
+                onSuccess = { response ->
+                    runOnUiThread {
+                        favoriteItems = response.favorites.map { it.toWeatherResponse() }.toMutableList()
+                        updateToggleButtons()
+                        btnToggleFavorite.isEnabled = true
+                        Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                onError = { error, statusCode ->
+                    runOnUiThread {
+                        btnToggleFavorite.isEnabled = true
+                        when (statusCode) {
+                            401 -> {
+                                Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
+                                handleUnauthorized()
+                            }
+                            else -> {
+                                Toast.makeText(this, "Failed to remove favorite: $error", Toast.LENGTH_LONG).show()
+                                // Reload favorites to sync state
+                                loadFavoritesFromServer(token)
+                            }
+                        }
+                    }
+                }
+            )
+        } else {
+            // Add to favorites
+            btnToggleFavorite.isEnabled = false
+            NetworkRepository.addFavorite(
+                token = token,
+                city = weather.city,
+                country = weather.country,
+                onSuccess = { response ->
+                    runOnUiThread {
+                        favoriteItems = response.favorites.map { it.toWeatherResponse() }.toMutableList()
+                        updateToggleButtons()
+                        btnToggleFavorite.isEnabled = true
+                        Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                onError = { error, statusCode ->
+                    runOnUiThread {
+                        btnToggleFavorite.isEnabled = true
+                        when (statusCode) {
+                            401 -> {
+                                Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
+                                handleUnauthorized()
+                            }
+                            409 -> {
+                                Toast.makeText(this, "City already in favorites", Toast.LENGTH_SHORT).show()
+                                // Reload favorites to sync state
+                                loadFavoritesFromServer(token)
+                            }
+                            400 -> Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                            else -> {
+                                Toast.makeText(this, "Failed to add favorite: $error", Toast.LENGTH_LONG).show()
+                                // Reload favorites to sync state
+                                loadFavoritesFromServer(token)
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 
+    private fun loadFavoritesFromServer(token: String) {
+        NetworkRepository.getFavorites(
+            token = token,
+            onSuccess = { response ->
+                runOnUiThread {
+                    favoriteItems = response.favorites.map { it.toWeatherResponse() }.toMutableList()
+                    updateToggleButtons()
+                    if (selectedMode == SelectedMode.FAVORITES) {
+                        renderSelectedList()
+                    }
+                }
+            },
+            onError = { error, statusCode ->
+                // Silent fail - just log the issue
+                if (statusCode == 401) {
+                    runOnUiThread { handleUnauthorized() }
+                }
+            }
+        )
+    }
+
     private fun onDeleteListItem(item: WeatherResponse) {
-        when (selectedMode) {
-            SelectedMode.HISTORY -> historyItems.removeAll { isSameLocation(it, item) }
-            SelectedMode.FAVORITES -> favoriteItems.removeAll { isSameLocation(it, item) }
-            SelectedMode.NONE -> return
+        val token = TokenManager.getToken(this)
+        if (token == null) {
+            Toast.makeText(this, getString(R.string.token_missing_error), Toast.LENGTH_LONG).show()
+            return
         }
 
-        // If current weather item was removed from favorites, only button state changes.
-        updateToggleButtons()
-        renderSelectedList()
+        when (selectedMode) {
+            SelectedMode.HISTORY -> {
+                // Call server API to delete history item
+                NetworkRepository.removeHistoryItem(
+                    token = token,
+                    city = item.city,
+                    onSuccess = { response ->
+                        runOnUiThread {
+                            historyItems = response.history.map { it.toWeatherResponse() }.toMutableList()
+                            renderSelectedList()
+                            Toast.makeText(this, "History item removed", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onError = { error, statusCode ->
+                        runOnUiThread {
+                            when (statusCode) {
+                                401 -> {
+                                    Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
+                                    handleUnauthorized()
+                                }
+                                else -> Toast.makeText(this, "Failed to remove history item: $error", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                )
+            }
+            SelectedMode.FAVORITES -> {
+                // Call server API to delete favorite item
+                NetworkRepository.removeFavorite(
+                    token = token,
+                    city = item.city,
+                    onSuccess = { response ->
+                        runOnUiThread {
+                            favoriteItems = response.favorites.map { it.toWeatherResponse() }.toMutableList()
+                            updateToggleButtons()
+                            renderSelectedList()
+                            Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onError = { error, statusCode ->
+                        runOnUiThread {
+                            when (statusCode) {
+                                401 -> {
+                                    Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
+                                    handleUnauthorized()
+                                }
+                                else -> Toast.makeText(this, "Failed to remove favorite: $error", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                )
+            }
+            SelectedMode.NONE -> return
+        }
     }
 
     private fun renderSelectedList() {
