@@ -329,6 +329,26 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
+    private fun loadHistoryFromServer(token: String) {
+        NetworkRepository.getHistory(
+            token = token,
+            onSuccess = { response ->
+                runOnUiThread {
+                    historyItems = response.history.map { it.toWeatherResponse() }.toMutableList()
+                    if (selectedMode == SelectedMode.HISTORY) {
+                        renderSelectedList()
+                    }
+                }
+            },
+            onError = { error, statusCode ->
+                // Silent fail - just log the issue
+                if (statusCode == 401) {
+                    runOnUiThread { handleUnauthorized() }
+                }
+            }
+        )
+    }
+
     private fun onDeleteListItem(item: WeatherResponse) {
         val token = TokenManager.getToken(this)
         if (token == null) {
@@ -338,12 +358,17 @@ class HomeActivity : AppCompatActivity() {
 
         when (selectedMode) {
             SelectedMode.HISTORY -> {
-                // Call server API to delete history item
+                // Remove from local list immediately for instant UI update
+                historyItems.removeAll { it.timestamp == item.timestamp }
+                renderSelectedList()
+
+                // Call server API to delete history item by timestamp
                 NetworkRepository.removeHistoryItem(
                     token = token,
-                    city = item.city,
+                    timestamp = item.timestamp,  // Use timestamp to identify specific item
                     onSuccess = { response ->
                         runOnUiThread {
+                            // Update with server response to ensure sync
                             historyItems = response.history.map { it.toWeatherResponse() }.toMutableList()
                             renderSelectedList()
                             Toast.makeText(this, "History item removed", Toast.LENGTH_SHORT).show()
@@ -356,19 +381,29 @@ class HomeActivity : AppCompatActivity() {
                                     Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
                                     handleUnauthorized()
                                 }
-                                else -> Toast.makeText(this, "Failed to remove history item: $error", Toast.LENGTH_LONG).show()
+                                else -> {
+                                    Toast.makeText(this, "Failed to remove history item: $error", Toast.LENGTH_LONG).show()
+                                    // Reload from server on error to restore state
+                                    loadHistoryFromServer(token)
+                                }
                             }
                         }
                     }
                 )
             }
             SelectedMode.FAVORITES -> {
+                // Remove from local list immediately for instant UI update
+                favoriteItems.removeAll { it.city.equals(item.city, ignoreCase = true) && it.country.equals(item.country, ignoreCase = true) }
+                updateToggleButtons()
+                renderSelectedList()
+
                 // Call server API to delete favorite item
                 NetworkRepository.removeFavorite(
                     token = token,
                     city = item.city,
                     onSuccess = { response ->
                         runOnUiThread {
+                            // Update with server response to ensure sync
                             favoriteItems = response.favorites.map { it.toWeatherResponse() }.toMutableList()
                             updateToggleButtons()
                             renderSelectedList()
@@ -382,7 +417,11 @@ class HomeActivity : AppCompatActivity() {
                                     Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
                                     handleUnauthorized()
                                 }
-                                else -> Toast.makeText(this, "Failed to remove favorite: $error", Toast.LENGTH_LONG).show()
+                                else -> {
+                                    Toast.makeText(this, "Failed to remove favorite: $error", Toast.LENGTH_LONG).show()
+                                    // Reload from server on error to restore state
+                                    loadFavoritesFromServer(token)
+                                }
                             }
                         }
                     }

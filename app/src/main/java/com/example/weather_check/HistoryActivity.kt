@@ -150,13 +150,18 @@ class HistoryActivity : AppCompatActivity() {
             return
         }
 
+        // Remove from local list immediately for instant UI update
+        historyItems.removeAll { it.timestamp == item.timestamp }
+        listAdapter.submitItems(historyItems)
+
         btnBack.isEnabled = false
         btnClearHistory.isEnabled = false
         NetworkRepository.removeHistoryItem(
             token = token,
-            city = item.city,
+            timestamp = item.timestamp,  // Use timestamp to identify specific item
             onSuccess = { response ->
                 runOnUiThread {
+                    // Update with server response to ensure sync
                     historyItems = response.history.map { it.toWeatherResponse() }.toMutableList()
                     listAdapter.submitItems(historyItems)
                     btnBack.isEnabled = true
@@ -173,7 +178,11 @@ class HistoryActivity : AppCompatActivity() {
                             Toast.makeText(this, getString(R.string.token_invalid_error), Toast.LENGTH_LONG).show()
                             redirectToLogin()
                         }
-                        else -> Toast.makeText(this, "Failed to remove history item: $error", Toast.LENGTH_LONG).show()
+                        else -> {
+                            Toast.makeText(this, "Failed to remove history item: $error", Toast.LENGTH_LONG).show()
+                            // Reload from server on error to restore state
+                            loadHistoryData()
+                        }
                     }
                 }
             }

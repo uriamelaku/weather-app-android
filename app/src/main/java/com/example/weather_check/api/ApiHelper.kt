@@ -78,11 +78,10 @@ object ApiHelper {
     }
 
     /**
-     * הסרת עיר בודדת מההיסטוריה עם אימות
+     * הסרת רשומה בודדת מההיסטוריה עם אימות (לפי timestamp)
      */
-    fun removeHistoryItemWithAuth(token: String, city: String): Response {
-        val encodedCity = URLEncoder.encode(city, StandardCharsets.UTF_8.name())
-        val endpoint = ApiConfig.HISTORY_BY_CITY_ENDPOINT_TEMPLATE.format(encodedCity)
+    fun removeHistoryItemWithAuth(token: String, timestamp: Long): Response {
+        val endpoint = ApiConfig.HISTORY_BY_TIMESTAMP_ENDPOINT_TEMPLATE.format(timestamp.toString())
         return client.newCall(buildDeleteRequest(endpoint, token)).execute()
     }
 

@@ -21,7 +21,7 @@ fun HistoryItem.toWeatherResponse(): WeatherResponse {
         windSpeed = this.windSpeed,
         description = this.description,
         icon = this.icon,
-        timestamp = System.currentTimeMillis()
+        timestamp = this.timestamp  // Use original timestamp from server
     )
 }
 

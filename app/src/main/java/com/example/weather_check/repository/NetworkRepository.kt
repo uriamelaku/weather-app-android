@@ -100,21 +100,21 @@ object NetworkRepository {
     }
 
     /**
-     * Remove single history item by city with authentication
+     * Remove single history item by timestamp with authentication
      * @param token JWT token from login
-     * @param city City name (will be URL encoded)
+     * @param timestamp Unix timestamp of the history item to delete
      * @param onSuccess Called with HistoryResponse on success
      * @param onError Called with error message on failure
      */
     fun removeHistoryItem(
         token: String,
-        city: String,
+        timestamp: Long,
         onSuccess: (HistoryResponse) -> Unit,
         onError: (String, Int?) -> Unit
     ) {
         Thread {
             try {
-                val response = ApiHelper.removeHistoryItemWithAuth(token, city)
+                val response = ApiHelper.removeHistoryItemWithAuth(token, timestamp)
                 val responseBody = response.body?.string()
 
                 when {
