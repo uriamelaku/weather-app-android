@@ -493,10 +493,32 @@ class HomeActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvCityName).text = "${weather.city}, ${weather.country}"
         findViewById<TextView>(R.id.tvTemperature).text = "${weather.temp.toInt()}°"
         findViewById<TextView>(R.id.tvFeelsLike).text = "${getString(R.string.feels_like)}: ${weather.feelsLike.toInt()}°"
-        findViewById<TextView>(R.id.tvDescription).text = weather.description
+
+        val emoji = getWeatherEmoji(weather.description)
+        findViewById<TextView>(R.id.tvDescription).text = "$emoji ${weather.description}"
+
         findViewById<TextView>(R.id.tvHumidity).text = "${weather.humidity}%"
         findViewById<TextView>(R.id.tvWindSpeed).text = "${weather.windSpeed} m/s"
 
         updateToggleButtons()
+    }
+
+    private fun getWeatherEmoji(description: String): String {
+        val desc = description.lowercase()
+        return when {
+            desc.contains("clear") || desc.contains("sunny") -> "☀️"
+            desc.contains("cloud") && desc.contains("few") -> "🌤️"
+            desc.contains("cloud") && desc.contains("scattered") -> "⛅"
+            desc.contains("cloud") && desc.contains("broken") -> "☁️"
+            desc.contains("cloud") || desc.contains("overcast") -> "☁️"
+            desc.contains("rain") && desc.contains("light") -> "🌦️"
+            desc.contains("rain") || desc.contains("drizzle") -> "🌧️"
+            desc.contains("thunderstorm") || desc.contains("storm") -> "⛈️"
+            desc.contains("snow") -> "❄️"
+            desc.contains("mist") || desc.contains("fog") || desc.contains("haze") -> "🌫️"
+            desc.contains("wind") -> "💨"
+            desc.contains("tornado") -> "🌪️"
+            else -> "🌡️"
+        }
     }
 }

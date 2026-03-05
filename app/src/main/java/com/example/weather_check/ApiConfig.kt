@@ -6,7 +6,7 @@ object ApiConfig {
     const val BASE_URL_PRODUCTION = "https://server-weather-android-app-new.onrender.com"
 
     // Default Android target; now using localhost server
-    const val BASE_URL = BASE_URL_ANDROID_EMULATOR
+    const val BASE_URL = BASE_URL_PRODUCTION
 
     const val PING_ENDPOINT = "/ping"
     const val REGISTER_ENDPOINT = "/register"

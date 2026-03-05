@@ -52,7 +52,8 @@ class WeatherListAdapter(
             title.text = "${item.city}, ${item.country}"
 
             if (item.temp > 0.0 || item.description.isNotEmpty()) {
-                subtitle.text = "${item.temp.toInt()}° - ${item.description}"
+                val emoji = getWeatherEmoji(item.description)
+                subtitle.text = "$emoji ${item.temp.toInt()}° - ${item.description}"
                 subtitle.visibility = View.VISIBLE
             } else {
                 subtitle.visibility = View.GONE
@@ -103,6 +104,25 @@ class WeatherListAdapter(
             val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.forLanguageTag("he-IL"))
             formatter.timeZone = israelTz
             return formatter.format(Date(millis))
+        }
+
+        private fun getWeatherEmoji(description: String): String {
+            val desc = description.lowercase()
+            return when {
+                desc.contains("clear") || desc.contains("sunny") -> "☀️"
+                desc.contains("cloud") && desc.contains("few") -> "🌤️"
+                desc.contains("cloud") && desc.contains("scattered") -> "⛅"
+                desc.contains("cloud") && desc.contains("broken") -> "☁️"
+                desc.contains("cloud") || desc.contains("overcast") -> "☁️"
+                desc.contains("rain") && desc.contains("light") -> "🌦️"
+                desc.contains("rain") || desc.contains("drizzle") -> "🌧️"
+                desc.contains("thunderstorm") || desc.contains("storm") -> "⛈️"
+                desc.contains("snow") -> "❄️"
+                desc.contains("mist") || desc.contains("fog") || desc.contains("haze") -> "🌫️"
+                desc.contains("wind") -> "💨"
+                desc.contains("tornado") -> "🌪️"
+                else -> "🌡️"
+            }
         }
     }
 }

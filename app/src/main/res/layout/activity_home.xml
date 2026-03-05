@@ -111,7 +111,9 @@
                 android:textDirection="rtl"
                 android:gravity="end|center_vertical"
                 android:paddingEnd="16dp"
-                android:paddingStart="16dp" />
+                android:paddingStart="16dp"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Buttons Row -->
@@ -222,7 +224,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@color/dark_gray"
-            android:padding="32dp"
+            android:padding="20dp"
             android:layoutDirection="rtl"
             android:gravity="center">
 
@@ -231,7 +233,7 @@
                 android:id="@+id/tvCityName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="28sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:gravity="end"
@@ -243,10 +245,10 @@
                 android:id="@+id/tvTemperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="72sp"
+                android:textSize="56sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:gravity="center" />
 
             <!-- Feels Like -->
@@ -254,9 +256,9 @@
                 android:id="@+id/tvFeelsLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textColor="#CCCCCC"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center" />
 
             <!-- Weather Description -->
@@ -264,9 +266,9 @@
                 android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/white"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:textAlignment="center" />
 
@@ -275,8 +277,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#444444"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp" />
 
             <!-- Weather Details Grid -->
             <LinearLayout
@@ -299,7 +301,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/humidity"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="#AAAAAA"
                         android:gravity="center" />
 
@@ -307,10 +309,10 @@
                         android:id="@+id/tvHumidity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:gravity="center" />
                 </LinearLayout>
 
@@ -326,7 +328,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/wind_speed"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:textColor="#AAAAAA"
                         android:gravity="center" />
 
@@ -334,10 +336,10 @@
                         android:id="@+id/tvWindSpeed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/white"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="6dp"
                         android:gravity="center" />
                 </LinearLayout>
             </LinearLayout>
@@ -348,7 +350,7 @@
                 android:orientation="horizontal"
                 android:layoutDirection="rtl"
                 android:gravity="end|center_vertical"
-                android:layout_marginTop="18dp">
+                android:layout_marginTop="14dp">
 
                 <Button
                     android:id="@+id/btnToggleFavorite"
