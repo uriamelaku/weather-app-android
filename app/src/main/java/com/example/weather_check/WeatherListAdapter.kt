@@ -1,6 +1,5 @@
 package com.example.weather_check
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +19,8 @@ class WeatherListAdapter(
     private val items = mutableListOf<WeatherResponse>()
 
     fun submitItems(newItems: List<WeatherResponse>) {
-        Log.d("WeatherListAdapter", "submitItems called with ${newItems.size} items")
-        newItems.forEach {
-            Log.d("WeatherListAdapter", "Item: ${it.city}")
-        }
         items.clear()
         items.addAll(newItems)
-        Log.d("WeatherListAdapter", "Adapter now has ${items.size} items")
         notifyDataSetChanged()
     }
 

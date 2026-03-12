@@ -72,9 +72,6 @@ class LoginActivity : AppCompatActivity() {
         val loginRequest = LoginRequest(username, password)
         val json = gson.toJson(loginRequest)
 
-        android.util.Log.d("LoginActivity", "Request URL: ${ApiConfig.BASE_URL}${ApiConfig.LOGIN_ENDPOINT}")
-        android.util.Log.d("LoginActivity", "Request JSON: $json")
-
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val requestBody = json.toRequestBody(mediaType)
 
@@ -97,31 +94,23 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.body?.string()
 
-                android.util.Log.d("LoginActivity", "Response code: ${response.code}")
-                android.util.Log.d("LoginActivity", "Response body: $responseBody")
-
                 runOnUiThread {
                     try {
                         if (responseBody.isNullOrEmpty()) {
-                            android.util.Log.e("LoginActivity", "Empty response from server")
                             Toast.makeText(
                                 this@LoginActivity,
                                 "${getString(R.string.login_error)}: Empty response from server",
                                 Toast.LENGTH_LONG
                             ).show()
-                            response.close()
                             return@runOnUiThread
                         }
 
                         when {
                             response.isSuccessful -> {
                                 try {
-                                    android.util.Log.d("LoginActivity", "Parsing login response...")
                                     val loginResponse = gson.fromJson(responseBody, LoginResponse::class.java)
-                                    android.util.Log.d("LoginActivity", "Parsed response: loginOk=${loginResponse.loginOk}, username=${loginResponse.username}, email=${loginResponse.email}, otpToken length=${loginResponse.otpToken.length}")
 
                                     if (!loginResponse.loginOk || loginResponse.otpToken.isEmpty()) {
-                                        android.util.Log.e("LoginActivity", "Invalid response: loginOk=${loginResponse.loginOk}, otpToken empty=${loginResponse.otpToken.isEmpty()}")
                                         Toast.makeText(
                                             this@LoginActivity,
                                             "${getString(R.string.login_error)}: Invalid response",
@@ -130,14 +119,11 @@ class LoginActivity : AppCompatActivity() {
                                         return@runOnUiThread
                                     }
 
-                                    // Save otpToken and email for next step
-                                    android.util.Log.d("LoginActivity", "Saving tokens to TokenManager...")
                                     TokenManager.saveOtpToken(
                                         this@LoginActivity,
                                         loginResponse.otpToken,
                                         loginResponse.email
                                     )
-                                    android.util.Log.d("LoginActivity", "Tokens saved successfully")
 
                                     Toast.makeText(
                                         this@LoginActivity,
@@ -147,21 +133,9 @@ class LoginActivity : AppCompatActivity() {
 
                                     val intent = Intent(this@LoginActivity, AuthMethodSelectionActivity::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    android.util.Log.d(
-                                        "LoginActivity",
-                                        "Navigating to ${AuthMethodSelectionActivity::class.java.simpleName}; extras=none (email/otpToken stored in TokenManager); email=${loginResponse.email}; otpTokenLength=${loginResponse.otpToken.length}"
-                                    )
-                                    android.util.Log.d(
-                                        "LoginActivity",
-                                        "Intent resolvable=${intent.resolveActivity(packageManager) != null}"
-                                    )
                                     startActivity(intent)
-                                    android.util.Log.d("LoginActivity", "Activity started, calling finish()...")
                                     finish()
-                                    android.util.Log.d("LoginActivity", "LoginActivity finished successfully")
                                 } catch (e: Exception) {
-                                    android.util.Log.e("LoginActivity", "Parse error: ${e.message}", e)
-                                    e.printStackTrace()
                                     Toast.makeText(
                                         this@LoginActivity,
                                         "${getString(R.string.login_error)}: ${e.message}",
@@ -184,8 +158,7 @@ class LoginActivity : AppCompatActivity() {
                                         "${getString(R.string.login_error)}: ${errorResponse.error}",
                                         Toast.LENGTH_LONG
                                     ).show()
-                                } catch (e: Exception) {
-                                    android.util.Log.e("LoginActivity", "Error parse error: ${e.message}", e)
+                                } catch (_: Exception) {
                                     Toast.makeText(
                                         this@LoginActivity,
                                         "${getString(R.string.login_error)}: ${response.code}",
@@ -194,14 +167,6 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                    } catch (e: Exception) {
-                        android.util.Log.e("LoginActivity", "Unexpected error in onResponse: ${e.message}", e)
-                        e.printStackTrace()
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Unexpected error: ${e.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
                     } finally {
                         response.close()
                     }
