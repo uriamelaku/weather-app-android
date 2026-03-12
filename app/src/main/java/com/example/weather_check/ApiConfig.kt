@@ -4,10 +4,10 @@ object ApiConfig {
     const val BASE_URL_ANDROID_EMULATOR = "http://10.0.2.2:3000"
     const val BASE_URL_LOCALHOST = "http://localhost:3000"
     const val BASE_URL_PRODUCTION = "https://server-weather-android-app-new.onrender.com"
-    const val BASE_URL_PHONE = "http://10.162.136.51:3000"
+    //const val BASE_URL_PHONE = "http://<YOUR_IP_ADDRESS>:3000"
 
-    // Default Android target; now using localhost server
-    const val BASE_URL = BASE_URL_PHONE
+    // Default Android target; switch between options as needed
+    const val BASE_URL = BASE_URL_PRODUCTION
 
     // Authentication endpoints
     const val PING_ENDPOINT = "/ping"

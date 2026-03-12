@@ -78,4 +78,27 @@
     <string name="delete_item">מחק פריט</string>
     <string name="select_weather_first">חפש קודם עיר כדי לעדכן רשימות</string>
     <string name="clear_all_favorites">נקה את כל המועדפים</string>
+
+    <!-- OTP Verification Activity -->
+    <string name="otp_title">אימות קוד</string>
+    <string name="otp_code_sent_to">הקוד נשלח אל:</string>
+    <string name="otp_email_placeholder">your.email@example.com</string>
+    <string name="otp_enter_code">הכנס קוד בן 6 ספרות:</string>
+    <string name="otp_hint">000000</string>
+    <string name="otp_expires_in">⏱️ הקוד יפוג בעוד:</string>
+    <string name="otp_default_timer">05:00</string>
+    <string name="otp_verify_button">אמת קוד</string>
+    <string name="otp_resend_button">שלח קוד מחדש</string>
+    <string name="otp_back_button">חזרה ←</string>
+    <string name="otp_code_sent_message">קוד בן 6 ספרות נשלח אל: %1$s</string>
+    <string name="otp_invalid_code">אנא הכנס קוד תקין בן 6 ספרות</string>
+    <string name="otp_code_expired_request_new">תוקף הקוד פג. אנא בקש קוד חדש.</string>
+    <string name="otp_code_expired">הקוד פג תוקף</string>
+    <string name="otp_code_expires_in_dynamic">הקוד יפוג בעוד: %1$s</string>
+    <string name="otp_token_expired_login_again">פג תוקף האימות. אנא התחבר מחדש.</string>
+    <string name="otp_invalid_code_attempts_left">קוד שגוי. ניסיונות שנותרו: %1$s</string>
+    <string name="otp_too_many_attempts">יותר מדי ניסיונות. אנא בקש קוד חדש.</string>
+    <string name="otp_new_code_sent">קוד חדש נשלח למייל שלך</string>
+    <string name="otp_resend_failed">שליחת הקוד נכשלה (%1$d)</string>
+    <string name="otp_resend_button_with_timer">שלח קוד מחדש (%1$ss)</string>
 </resources>

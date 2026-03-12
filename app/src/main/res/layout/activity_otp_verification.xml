@@ -21,7 +21,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email Verification"
+            android:text="@string/otp_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
@@ -43,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Code sent to:"
+                    android:text="@string/otp_code_sent_to"
                     android:textSize="14sp"
                     android:layout_marginBottom="8dp" />
 
@@ -51,7 +51,7 @@
                     android:id="@+id/tvEmailAddress"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="your.email@example.com"
+                    android:text="@string/otp_email_placeholder"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp" />
@@ -63,7 +63,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enter the 6-digit code:"
+            android:text="@string/otp_enter_code"
             android:textSize="16sp"
             android:layout_marginBottom="12dp" />
 
@@ -71,12 +71,13 @@
             android:id="@+id/etOtpCode"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:hint="000000"
+            android:hint="@string/otp_hint"
             android:inputType="number"
             android:textDirection="ltr"
             android:gravity="center"
             android:textSize="24sp"
             android:maxLength="6"
+            android:autofillHints="oneTimeCode"
             android:layout_marginBottom="16dp" />
 
         <LinearLayout
@@ -89,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="⏱️ Code expires in:"
+                android:text="@string/otp_expires_in"
                 android:textSize="14sp"
                 android:gravity="start" />
 
@@ -98,7 +99,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="05:00"
+                android:text="@string/otp_default_timer"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:gravity="end" />
@@ -109,7 +110,7 @@
             android:id="@+id/btnVerifyCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Verify Code"
+            android:text="@string/otp_verify_button"
             android:textSize="16sp"
             android:layout_marginBottom="12dp" />
 
@@ -117,7 +118,7 @@
             android:id="@+id/btnResendCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Resend Code"
+            android:text="@string/otp_resend_button"
             android:textSize="14sp"
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginBottom="16dp" />
@@ -126,7 +127,7 @@
             android:id="@+id/btnBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="← Back"
+            android:text="@string/otp_back_button"
             android:textSize="14sp"
             android:backgroundTint="@android:color/holo_red_dark" />
 
